@@ -17,7 +17,9 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * @author ian A data structure to represent a strictly hierarchical organization of employees.
+ * A data structure to represent a strictly hierarchical organization of employees.
+ *
+ * @author ian
  */
 public class Company {
     /**
