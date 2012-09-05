@@ -65,7 +65,7 @@ public class Company {
 		if (manager != null) {
 			m_directReportMap.get(manager).add(employee);
 		}
-		m_directReportMap.put(employee, new HashSet());
+		m_directReportMap.put(employee, new HashSet<String>());
 		m_managerMap.put(employee, manager);
 	}
 }
