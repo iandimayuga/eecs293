@@ -4,9 +4,13 @@
  */
 package edu.cwru.icd3;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -236,5 +240,64 @@ public class Company {
         }
 
         return dept;
+    }
+
+    /**
+     * Get a list of all employees sorted first by the size of their department, then alphabetically by name.
+     *
+     * @return A list of employes by department size.
+     */
+    public List<String> managersByDepartmentSize() {
+        // Check for empty Company
+        if (m_head == null) {
+            return new ArrayList<String>();
+        }
+
+        final Map<String, Integer> subordinates = new HashMap<String, Integer>();
+        subordinates.put(m_head, countSubordinates(m_head, subordinates));
+
+        // Define Comparator which uses the map and defaults to alphabetical otherwise
+        Comparator<String> deptComparator = new Comparator<String>() {
+            @Override
+            public int compare(String arg0, String arg1) {
+                int comp = subordinates.get(arg0) - subordinates.get(arg1);
+                return comp == 0 ? arg0.compareTo(arg1) : comp;
+            }
+        };
+
+        // Sort a list of managers by the Comparator
+        ArrayList<String> managers = new ArrayList<String>(subordinates.keySet());
+        Collections.sort(managers, deptComparator);
+        return managers;
+    }
+
+    /**
+     * Get the department size of a manager and pass back a map of subordinates with department size.
+     *
+     * @param manager
+     *            Name of the manager.
+     * @param subordinates
+     *            Output map from subordinates to sizes.
+     * @return Total size of the manager's department.
+     */
+    private int countSubordinates(String manager, Map<String, Integer> subordinates) {
+        Set<String> employees = m_employeeMap.get(manager);
+
+        if (employees.size() == 0) {
+            return 0;
+        }
+
+        int total = 0;
+
+        // Recursively enumerate subordinates
+        for (String employee : employees) {
+            int subtotal = countSubordinates(employee, subordinates);
+            // Add subordinate to map
+            subordinates.put(employee, subtotal);
+            // Add subordinate's count to own total, including direct subordinate
+            total += subtotal + 1;
+        }
+
+        return total;
     }
 }
