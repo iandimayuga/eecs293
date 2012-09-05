@@ -40,6 +40,14 @@ public class Company {
 	 * @param manager
 	 *            Name of an existing employee to be the manager of the new employee. A manager of null is used if and
 	 *            only if the Company is currently empty, and the new employee will be the CEO.
+	 * @throws NullPointerException
+	 *             If employee is null.
+	 * @throws IllegalArgumentException
+	 *             If the specified manager is null but the Company is not empty.
+	 * @throws NoSuchElementException
+	 *             If the specified manager is nonexistent.
+	 * @throws IllegalArgumentException
+	 *             If there is already an employee with that name in the Company.
 	 */
 	public void add(String employee, String manager) {
 		// Null-check employee
