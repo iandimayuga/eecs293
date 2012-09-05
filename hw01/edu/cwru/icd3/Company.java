@@ -137,4 +137,13 @@ public class Company {
         // Look up manager
         return m_managerMap.get(employee);
     }
+
+    /**
+     * Gets the names of all Company managers.
+     *
+     * @return A set of all employees who have at least one direct report.
+     */
+    public Set<String> managerSet() {
+        return new HashSet<String>(m_managerMap.values());
+    }
 }
