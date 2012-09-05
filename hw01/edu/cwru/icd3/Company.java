@@ -209,6 +209,15 @@ public class Company {
     }
 
     /**
+     * Gets the names of all Company employees.
+     *
+     * @return A set of all employees.
+     */
+    public Set<String> employeeSet() {
+        return new HashSet<String>(m_managerMap.keySet());
+    }
+
+    /**
      * Generates a Company from an employee and all subordinates.
      *
      * @param manager

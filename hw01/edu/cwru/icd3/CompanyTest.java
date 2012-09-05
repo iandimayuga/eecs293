@@ -71,6 +71,14 @@ public class CompanyTest {
     }
 
     /**
+     * Test method for {@link edu.cwru.icd3.Company#employeeSet()}.
+     */
+    @Test
+    public void testEmployeeSet() {
+        fail("Not yet implemented");
+    }
+
+    /**
      * Test method for {@link edu.cwru.icd3.Company#departmentOf(java.lang.String)}.
      */
     @Test
