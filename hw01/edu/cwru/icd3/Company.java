@@ -6,8 +6,10 @@ package edu.cwru.icd3;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -75,6 +77,41 @@ public class Company {
         }
         m_employeeMap.put(employee, new HashSet<String>());
         m_managerMap.put(employee, manager);
+    }
+
+    /**
+     * Adds a group of employees to the company, specifying their manager.
+     *
+     * @param employees
+     *            Names of the employees to be added. Employees already in the Company are ignored.
+     * @param manager
+     *            Name of an existing employee to be the manager of the new employees. Cannot be null.
+     * @throws NullPointerException
+     *             If employees is null.
+     * @throws IllegalArgumentException
+     *             If the specified manager is null but the Company is not empty.
+     * @throws NoSuchElementException
+     *             If the specified manager is nonexistent.
+     */
+    public void addAll(Set<String> employees, String manager) {
+        // Null-check manager
+        if (manager == null) {
+            throw new IllegalArgumentException("manager cannot be null");
+        }
+        if (!m_employeeMap.containsKey(manager)) {
+            // If manager doesn't exist in the Company, throw exception
+            throw new NoSuchElementException(String.format("Company has no employee with name %s.", manager));
+        }
+
+        // Ignore existing employees
+        Set<String> culledEmployees = new HashSet<String>(employees);
+        culledEmployees.removeAll(m_managerMap.keySet());
+
+        // Add remaining employees to Company
+        m_employeeMap.get(manager).addAll(culledEmployees);
+        for (String employee : culledEmployees) {
+            m_managerMap.put(employee, manager);
+        }
     }
 
     /**
@@ -149,5 +186,42 @@ public class Company {
      */
     public Set<String> managerSet() {
         return new HashSet<String>(m_managerMap.values());
+    }
+
+    /**
+     * Generates a Company from an employee and all subordinates.
+     *
+     * @param manager
+     *            Name of the employee who is head of the department.
+     * @return A new Company with the head and subordinates populated.
+     * @throws NullPointerException
+     *             If manager is null.
+     */
+    public Company departmentOf(String manager) {
+        // Null-check manager
+        if (manager == null) {
+            throw new NullPointerException("manager cannot be null");
+        }
+
+        Company dept = new Company();
+
+        // Check for existence
+        if (!m_employeeMap.containsKey(manager)) {
+            return dept;
+        }
+
+        dept.add(manager, null);
+
+        // Execute a breadth-first traversal starting with manager
+        Queue<String> queue = new LinkedList<String>();
+        queue.add(manager);
+
+        while (queue.size() > 0) {
+            String employee = queue.remove();
+            dept.addAll(m_employeeMap.get(employee), employee);
+            queue.addAll(m_employeeMap.get(employee));
+        }
+
+        return dept;
     }
 }
