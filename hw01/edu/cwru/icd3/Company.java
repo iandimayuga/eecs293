@@ -15,21 +15,21 @@ import java.util.Set;
  */
 public class Company {
     /**
-     * Map of employee names to manager names. Each employee has one manager, with the exception of the CEO.
+     * Map of employee name to manager name. Each employee has one manager, with the exception of the head.
      */
     private Map<String, String> m_managerMap;
 
     /**
-     * Map of employee names to the set of direct subordinates.
+     * Map of employee name to the set of direct subordinates.
      */
-    private Map<String, Set<String>> m_directReportMap;
+    private Map<String, Set<String>> m_employeeMap;
 
     /**
      * Creates an empty Company with no employees.
      */
     public Company() {
         m_managerMap = new HashMap<String, String>();
-        m_directReportMap = new HashMap<String, Set<String>>();
+        m_employeeMap = new HashMap<String, Set<String>>();
     }
 
     /**
@@ -39,7 +39,7 @@ public class Company {
      *            Name of the employee to be added.
      * @param manager
      *            Name of an existing employee to be the manager of the new employee. A manager of null is used if and
-     *            only if the Company is currently empty, and the new employee will be the CEO.
+     *            only if the Company is currently empty, and the new employee will be the head.
      * @throws NullPointerException
      *             If employee is null.
      * @throws IllegalArgumentException
@@ -56,10 +56,10 @@ public class Company {
         }
         if (manager == null) {
             // If manager is null, but the Company isn't empty, throw exception
-            if (m_directReportMap.size() > 0) {
+            if (m_employeeMap.size() > 0) {
                 throw new IllegalArgumentException("manager is null, but Company is not empty.");
             }
-        } else if (!m_directReportMap.containsKey(manager)) {
+        } else if (!m_employeeMap.containsKey(manager)) {
             // If manager doesn't exist in the Company, throw exception
             // This includes the case where the Company is empty but a manager was specified
             throw new NoSuchElementException(String.format("Company has no employee with name %s.", manager));
@@ -71,9 +71,9 @@ public class Company {
         }
         // Add employee to Company, and to manager's set of direct reports if manager exists
         if (manager != null) {
-            m_directReportMap.get(manager).add(employee);
+            m_employeeMap.get(manager).add(employee);
         }
-        m_directReportMap.put(employee, new HashSet<String>());
+        m_employeeMap.put(employee, new HashSet<String>());
         m_managerMap.put(employee, manager);
     }
 
@@ -101,7 +101,7 @@ public class Company {
             throw new NoSuchElementException(String.format("Company has no employee with name %s.", employee));
         }
         // Check for direct reports
-        if (m_directReportMap.get(employee).size() > 0) {
+        if (m_employeeMap.get(employee).size() > 0) {
             throw new IllegalArgumentException(String.format("Employee '%s' has direct reports and cannot be deleted.",
                     employee));
         }
@@ -109,11 +109,11 @@ public class Company {
         String manager = m_managerMap.get(employee);
         if (manager != null) {
             // Remove employee from manager's department (unless manager is null)
-            m_directReportMap.get(manager).remove(employee);
+            m_employeeMap.get(manager).remove(employee);
         }
         // Delete records of employee
         m_managerMap.remove(employee);
-        m_directReportMap.remove(employee);
+        m_employeeMap.remove(employee);
     }
 
     /**
@@ -121,7 +121,11 @@ public class Company {
      *
      * @param employee
      *            The name of the employee to query.
-     * @return The manager of the employee, or null if the employee is the CEO.
+     * @return The manager of the employee, or null if the employee is the head.
+     * @throws NullPointerException
+     *             If employee is null.
+     * @throws NoSuchElementException
+     *             If employee is nonexistent.
      */
     public String managerOf(String employee) {
         // Null-check employee
