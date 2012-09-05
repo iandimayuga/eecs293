@@ -115,4 +115,26 @@ public class Company {
         m_managerMap.remove(employee);
         m_directReportMap.remove(employee);
     }
+
+    /**
+     * Gets the name of an employee's manager.
+     *
+     * @param employee
+     *            The name of the employee to query.
+     * @return The manager of the employee, or null if the employee is the CEO.
+     */
+    public String managerOf(String employee) {
+        // Null-check employee
+        if (employee == null) {
+            throw new NullPointerException("employee cannot be null");
+        }
+
+        // Check for existence
+        if (!m_managerMap.containsKey(employee)) {
+            throw new NoSuchElementException(String.format("Company has no employee with name %s.", employee));
+        }
+
+        // Look up manager
+        return m_managerMap.get(employee);
+    }
 }
