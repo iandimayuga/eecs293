@@ -5,6 +5,7 @@
 package edu.cwru.icd3;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -50,9 +51,9 @@ public class Company {
 			if (m_directReportMap.size() > 0) {
 				throw new IllegalArgumentException("manager is null, but Company is not empty.");
 			}
-		}
-		// If manager doesn't exist in the Company, throw exception
-		if (!m_directReportMap.containsKey(manager)) {
+		} else if (!m_directReportMap.containsKey(manager)) {
+			// If manager doesn't exist in the Company, throw exception
+			// This includes the case where the Company is empty but a manager was specified
 			throw new NoSuchElementException(String.format("Company has no employee with name %s.", manager));
 		}
 		// If employee already exists in the Company, throw exception
@@ -64,6 +65,7 @@ public class Company {
 		if (manager != null) {
 			m_directReportMap.get(manager).add(employee);
 		}
+		m_directReportMap.put(employee, new HashSet());
 		m_managerMap.put(employee, manager);
 	}
 }
