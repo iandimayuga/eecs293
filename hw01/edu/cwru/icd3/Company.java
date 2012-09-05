@@ -203,7 +203,9 @@ public class Company {
      * @return A set of all employees who have at least one direct report.
      */
     public Set<String> managerSet() {
-        return new HashSet<String>(m_managerMap.values());
+        Set<String> managers = new HashSet<String>(m_managerMap.values());
+        managers.remove(null);
+        return managers;
     }
 
     /**
