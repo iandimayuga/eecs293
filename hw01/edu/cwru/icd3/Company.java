@@ -77,43 +77,42 @@ public class Company {
         m_managerMap.put(employee, manager);
     }
 
-	/**
-	 * Removes an employee from the Company, including from any list of direct reports. The employee may not be a
-	 * manager.
-	 * 
-	 * @param employee
-	 *            Name of the employee to delete.
-	 * @throws NullPointerException
-	 *             If employee is null.
-	 * @throws NoSuchElementException
-	 *             If employee is nonexistent.
-	 * @throws IllegalArgumentException
-	 *             If the employee has any direct reports.
-	 */
-	public void delete(String employee) {
-		// Null-check employee
-		if (employee == null) {
-			throw new NullPointerException("employee cannot be null");
-		}
+    /**
+     * Removes an employee from the Company, including from any list of direct reports. The employee may not be a
+     * manager.
+     *
+     * @param employee
+     *            Name of the employee to delete.
+     * @throws NullPointerException
+     *             If employee is null.
+     * @throws NoSuchElementException
+     *             If employee is nonexistent.
+     * @throws IllegalArgumentException
+     *             If the employee has any direct reports.
+     */
+    public void delete(String employee) {
+        // Null-check employee
+        if (employee == null) {
+            throw new NullPointerException("employee cannot be null");
+        }
 
-		// Check for existence
-		if (!m_managerMap.containsKey(employee)) {
-			throw new NoSuchElementException(String.format("Company has no employee with name %s.", employee));
-		}
-		// Check for direct reports
-		if (m_directReportMap.get(employee).size() > 0) {
-			throw new IllegalArgumentException(String.format("Employee '%s' has direct reports and cannot be deleted.",
-					employee));
-		}
-		
-		String manager = m_managerMap.get(employee);
-		if (manager != null)
-		{
-			// Remove employee from manager's department (unless manager is null)
-			m_directReportMap.get(manager).remove(employee);
-		}
-		// Delete records of employee
-		m_managerMap.remove(employee);
-		m_directReportMap.remove(employee);
-	}
+        // Check for existence
+        if (!m_managerMap.containsKey(employee)) {
+            throw new NoSuchElementException(String.format("Company has no employee with name %s.", employee));
+        }
+        // Check for direct reports
+        if (m_directReportMap.get(employee).size() > 0) {
+            throw new IllegalArgumentException(String.format("Employee '%s' has direct reports and cannot be deleted.",
+                    employee));
+        }
+
+        String manager = m_managerMap.get(employee);
+        if (manager != null) {
+            // Remove employee from manager's department (unless manager is null)
+            m_directReportMap.get(manager).remove(employee);
+        }
+        // Delete records of employee
+        m_managerMap.remove(employee);
+        m_directReportMap.remove(employee);
+    }
 }
