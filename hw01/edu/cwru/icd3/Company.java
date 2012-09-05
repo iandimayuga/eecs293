@@ -27,11 +27,17 @@ public class Company {
     private Map<String, Set<String>> m_employeeMap;
 
     /**
+     * Name of head of company.
+     */
+    private String m_head;
+
+    /**
      * Creates an empty Company with no employees.
      */
     public Company() {
         m_managerMap = new HashMap<String, String>();
         m_employeeMap = new HashMap<String, Set<String>>();
+        m_head = null;
     }
 
     /**
@@ -74,13 +80,16 @@ public class Company {
         // Add employee to Company, and to manager's set of direct reports if manager exists
         if (manager != null) {
             m_employeeMap.get(manager).add(employee);
+        } else {
+            // New employee is the head
+            m_head = employee;
         }
         m_employeeMap.put(employee, new HashSet<String>());
         m_managerMap.put(employee, manager);
     }
 
     /**
-     * Adds a group of employees to the company, specifying their manager.
+     * Adds a group of employees to the company, specifying their manager. The Company must be non-empty.
      *
      * @param employees
      *            Names of the employees to be added. Employees already in the Company are ignored.
@@ -89,7 +98,7 @@ public class Company {
      * @throws NullPointerException
      *             If employees is null.
      * @throws IllegalArgumentException
-     *             If the specified manager is null but the Company is not empty.
+     *             If the specified manager is null.
      * @throws NoSuchElementException
      *             If the specified manager is nonexistent.
      */
@@ -147,6 +156,9 @@ public class Company {
         if (manager != null) {
             // Remove employee from manager's department (unless manager is null)
             m_employeeMap.get(manager).remove(employee);
+        } else {
+            // employee was head of company
+            m_head = null;
         }
         // Delete records of employee
         m_managerMap.remove(employee);
@@ -193,7 +205,8 @@ public class Company {
      *
      * @param manager
      *            Name of the employee who is head of the department.
-     * @return A new Company with the head and subordinates populated.
+     * @return A new Company with the head and subordinates populated. If manager is nonexistent, an empty Company will
+     *         be returned.
      * @throws NullPointerException
      *             If manager is null.
      */
