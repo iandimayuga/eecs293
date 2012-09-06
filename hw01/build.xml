@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CompanyTest.makejar" default="build" basedir=".">
+	<target name="build" description="Create a jar for the Company">
+		<jar jarfile="Company.jar" includes="Company.class" basedir="." />
+	</target>
+	<property name="src" value="." />
+	<property name="lib" value="." />
+	<property name="classes" value="." />
+	<property name="test.class.name" value="edu.cwru.icd3.CompanyTest" />
+
+
+	<path id="test.classpath">
+	  <pathelement location="${classes}" />
+	  <pathelement location="./junit.jar" />
+	  <fileset dir="${lib}">
+	    <include name="**/*.jar"/>
+	  </fileset>
+	</path>
+
+
+	<target name="test">
+	  <junit fork="yes" haltonfailure="yes">
+	    <test name="${test.class.name}" />
+	    <formatter type="plain" usefile="false" />
+	    <classpath refid="." />
+	  </junit>
+	</target>
+</project>
