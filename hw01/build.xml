@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="CompanyTest.makejar" default="build" basedir=".">
+<project name="Company" default="build" basedir=".">
 	<target name="build" description="Create a jar for the Company">
-		<jar jarfile="Company.jar" includes="Company.class" basedir="." />
+                <javac srcdir="." destdir="." classpath="junit-4.10.jar" includeantruntime="false"/>
+		<jar jarfile="Company.jar" includes="edu/cwru/icd3/*.class" basedir="." />
 	</target>
 	<property name="src" value="." />
 	<property name="lib" value="." />
@@ -22,7 +23,7 @@
 	  <junit fork="yes" haltonfailure="yes">
 	    <test name="${test.class.name}" />
 	    <formatter type="plain" usefile="false" />
-	    <classpath refid="." />
+	    <classpath refid="test.classpath" />
 	  </junit>
 	</target>
 </project>
