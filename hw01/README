@@ -1,0 +1,5 @@
+Ian Dimayuga (icd3)
+EECS 293 HW01
+
+To compile: ant build
+To run unit tests: ant test
