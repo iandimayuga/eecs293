@@ -126,6 +126,7 @@ public class Company {
         m_employeeMap.get(manager).addAll(culledEmployees);
         for (String employee : culledEmployees) {
             m_managerMap.put(employee, manager);
+            m_employeeMap.put(employee, new HashSet<String>());
         }
     }
 
