@@ -122,6 +122,7 @@ public class Tank {
 
     /**
      * Get the area of the base of the tank.
+     *
      * @return The area of the cross-section in the xy plane.
      */
     public double baseArea() {
