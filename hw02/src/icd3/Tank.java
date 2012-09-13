@@ -74,16 +74,12 @@ public class Tank
      * Set the Tank's minimum and maximum points to the specified coordinates. This can only be done once. Calling the
      * parameterized constructor counts as setting the coordinates.
      *
-     * @param bottomLeft
-     *            A point in space that will represent the minimum x,y,z of the tank.
-     * @param topRight
-     *            A point in space that will represent the maximum x,y,z of the tank.
-     * @throws IllegalStateException
-     *             If setCoordinates or the parameterized constructor have been called before.
-     * @throws IllegalArgumentException
-     *             If there are not enough coordinates in either parameter.
-     * @throws IllegalArgumentException
-     *             If any of bottomLeft's components are greater than topRight's corresponding component.
+     * @param bottomLeft A point in space that will represent the minimum x,y,z of the tank.
+     * @param topRight A point in space that will represent the maximum x,y,z of the tank.
+     * @throws IllegalStateException If setCoordinates or the parameterized constructor have been called before.
+     * @throws IllegalArgumentException If there are not enough coordinates in either parameter.
+     * @throws IllegalArgumentException If any of bottomLeft's components are greater than topRight's corresponding
+     *             component.
      */
     public void setCoordinates(double[] bottomLeft, double[] topRight)
     {
@@ -173,8 +169,7 @@ public class Tank
      * Compares this Tank to the specified object. The result is true if and only if the argument is not null and is a
      * Tank object whose hashCode evaluates to the same number as this object's.
      *
-     * @param o
-     *            The object to compare this Tank against
+     * @param o The object to compare this Tank against
      *
      * @return true if the given object represents a Tank equivalent to this, and false otherwise.
      */
