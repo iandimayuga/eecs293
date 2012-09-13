@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WaterSystem" default="build" basedir=".">
+	<target name="build" description="Create a jar for the WaterSystem">
+                <javac srcdir="./src" destdir="./bin" classpath="junit-4.10.jar" includeantruntime="false"/>
+		<jar jarfile="WaterSystem.jar" includes="icd3/*.class" basedir="." />
+	</target>
+
+	<property name="src" value="./src" />
+	<property name="lib" value="." />
+	<property name="classes" value="./bin" />
+	<property name="tankTest.class.name" value="icd3.TankTest" />
+	<property name="systemTest.class.name" value="icd3.WaterSystemTest" />
+
+	<path id="test.classpath">
+	  <pathelement location="${classes}" />
+	  <pathelement location="./junit.jar" />
+	  <fileset dir="${lib}">
+	    <include name="**/*.jar"/>
+	  </fileset>
+	</path>
+
+	<target name="tankTest">
+	  <junit fork="yes" haltonfailure="yes">
+	    <test name="${tankTest.class.name}" />
+	    <formatter type="plain" usefile="false" />
+	    <classpath refid="test.classpath" />
+	  </junit>
+	</target>
+
+	<target name="systemTest">
+	  <junit fork="yes" haltonfailure="yes">
+	    <test name="${systemTest.class.name}" />
+	    <formatter type="plain" usefile="false" />
+	    <classpath refid="test.classpath" />
+	  </junit>
+	</target>
+</project>
