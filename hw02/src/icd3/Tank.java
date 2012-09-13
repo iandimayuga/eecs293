@@ -12,7 +12,8 @@ import java.util.Arrays;
  * @author ian
  *
  */
-public class Tank {
+public class Tank
+{
 
     /**
      * A simple map from 0,1,2 to x,y,z for output purposes.
@@ -44,7 +45,8 @@ public class Tank {
      * Initialize a Tank with zero size at 0,0,0. The Tank can then be set to specified coordinates. This Tank is not
      * equivalent to a Tank explicitly set to zero size at 0,0,0.
      */
-    public Tank() {
+    public Tank()
+    {
         // Set default value
         m_bottomLeft = new double[3];
         m_topRight = new double[3];
@@ -59,7 +61,8 @@ public class Tank {
     /**
      * Initialize an immutable Tank with specified coordinates.
      */
-    public Tank(double[] bottomLeft, double[] topRight) {
+    public Tank(double[] bottomLeft, double[] topRight)
+    {
         // Call overloaded initializing constructor
         this();
 
@@ -82,14 +85,17 @@ public class Tank {
      * @throws IllegalArgumentException
      *             If any of bottomLeft's components are greater than topRight's corresponding component.
      */
-    public void setCoordinates(double[] bottomLeft, double[] topRight) {
+    public void setCoordinates(double[] bottomLeft, double[] topRight)
+    {
         // Enforce immutability
-        if (m_isSet) {
+        if (m_isSet)
+        {
             throw new IllegalStateException("Tank coordinates cannot be set more than once.");
         }
 
         // Check for too few elements
-        if (bottomLeft.length < 3 || topRight.length < 3) {
+        if (bottomLeft.length < 3 || topRight.length < 3)
+        {
             // Format meaningful exception output (extra conditionals here are okay because we are about to throw)
             String wrongParam = (bottomLeft.length < 3 ? "bottomLeft" : "topRight");
             int wrongValue = (bottomLeft.length < 3 ? bottomLeft.length : topRight.length);
@@ -98,8 +104,10 @@ public class Tank {
         }
 
         // Validate that bottomLeft is less than or equal to topRight in all components
-        for (int i = 0; i < 3; ++i) {
-            if (bottomLeft[i] > topRight[i]) {
+        for (int i = 0; i < 3; ++i)
+        {
+            if (bottomLeft[i] > topRight[i])
+            {
                 throw new IllegalArgumentException(String.format("Edge %d (%c-coordinate) is negative.", i,
                         s_coordinateName[i]));
             }
@@ -125,7 +133,8 @@ public class Tank {
      *
      * @return The minimum z-value.
      */
-    public double getBottom() {
+    public double getBottom()
+    {
         return m_bottomLeft[2];
     }
 
@@ -134,7 +143,8 @@ public class Tank {
      *
      * @return The maximum z-value.
      */
-    public double getTop() {
+    public double getTop()
+    {
         return m_topRight[2];
     }
 
@@ -143,7 +153,8 @@ public class Tank {
      *
      * @return The area of the cross-section in the xy plane.
      */
-    public double baseArea() {
+    public double baseArea()
+    {
         return (m_topRight[0] - m_bottomLeft[0]) * (m_topRight[1] - m_bottomLeft[1]);
     }
 
@@ -153,7 +164,8 @@ public class Tank {
      * @return A hash code value for this object.
      */
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return m_hashCode;
     }
 
@@ -167,7 +179,8 @@ public class Tank {
      * @return true if the given object represents a Tank equivalent to this, and false otherwise.
      */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         return null == o || o.getClass() != Tank.class ? false : o.hashCode() == this.hashCode();
     }
 
@@ -177,7 +190,8 @@ public class Tank {
      * @return "Tank: Default" for the default Tank, otherwise the coordinates of the Tank.
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return m_isSet ? String.format("Tank: %s to %s", Arrays.toString(m_bottomLeft), Arrays.toString(m_topRight))
                 : "Tank: Default";
     }
