@@ -13,6 +13,7 @@ import java.util.Arrays;
  *
  */
 public class Tank {
+
     /**
      * A simple map from 0,1,2 to x,y,z for output purposes.
      */
@@ -29,17 +30,27 @@ public class Tank {
     private double[] m_topRight;
 
     /**
+     * Hash Code of this object. Determined by concatenating bottomLeft with topRight and using Arrays.hashCode. The
+     * Hash Code is 0 if the Tank has not yet been set.
+     */
+    private int m_hashCode;
+
+    /**
      * Mutation flag to guarantee immutability of the object.
      */
     private boolean m_isSet;
 
     /**
-     * Initialize a Tank with zero size at 0,0,0. The Tank can then be set to specified coordinates.
+     * Initialize a Tank with zero size at 0,0,0. The Tank can then be set to specified coordinates. This Tank is not
+     * equivalent to a Tank explicitly set to zero size at 0,0,0.
      */
     public Tank() {
         // Set default value
         m_bottomLeft = new double[3];
         m_topRight = new double[3];
+
+        // The hash code is 0 for an unset Tank.
+        m_hashCode = 0;
 
         // Allow to be set once
         m_isSet = false;
@@ -98,6 +109,13 @@ public class Tank {
         m_bottomLeft = Arrays.copyOf(bottomLeft, 3);
         m_topRight = Arrays.copyOf(topRight, 3);
 
+        // Generate hashcode. This only has to be done once because the Tank is now immutable.
+        double[] hashArray = new double[6];
+        System.arraycopy(m_bottomLeft, 0, hashArray, 0, 3);
+        System.arraycopy(m_topRight, 0, hashArray, 3, 3);
+
+        m_hashCode = Arrays.hashCode(hashArray);
+
         // Set mutation flag
         m_isSet = true;
     }
@@ -127,5 +145,40 @@ public class Tank {
      */
     public double baseArea() {
         return (m_topRight[0] - m_bottomLeft[0]) * (m_topRight[1] - m_bottomLeft[1]);
+    }
+
+    /**
+     * Returns a hash code for the Tank. The hash code is computed by concatenating the bottomLeft and topRight arrays.
+     *
+     * @return A hash code value for this object.
+     */
+    @Override
+    public int hashCode() {
+        return m_hashCode;
+    }
+
+    /**
+     * Compares this Tank to the specified object. The result is true if and only if the argument is not null and is a
+     * Tank object whose hashCode evaluates to the same number as this object's.
+     *
+     * @param o
+     *            The object to compare this Tank against
+     *
+     * @return true if the given object represents a Tank equivalent to this, and false otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        return null == o || o.getClass() != Tank.class ? false : o.hashCode() == this.hashCode();
+    }
+
+    /**
+     * Returns a string representation of the Tank.
+     *
+     * @return "Tank: Default" for the default Tank, otherwise the coordinates of the Tank.
+     */
+    @Override
+    public String toString() {
+        return m_isSet ? String.format("Tank: %s to %s", Arrays.toString(m_bottomLeft), Arrays.toString(m_topRight))
+                : "Tank: Default";
     }
 }

@@ -33,16 +33,16 @@ public class TankTest {
      */
     @Test
     public void testTank() {
-        Tank empty = new Tank();
-        assertTrue(empty.getBottom() == 0.0);
-        assertTrue(empty.getTop() == 0.0);
-        assertTrue(empty.baseArea() == 0.0);
+        Tank defaultTank = new Tank();
+        assertTrue(defaultTank.getBottom() == 0.0);
+        assertTrue(defaultTank.getTop() == 0.0);
+        assertTrue(defaultTank.baseArea() == 0.0);
     }
 
     /**
      * Test method for Illegal State behavior of {@link icd3.Tank#setCoordinates(double[], double[])}.
      */
-    @Test(expected=IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void testSetCoordinatesIllegalState() {
         Tank tank = new Tank();
         tank.setCoordinates(new double[3], new double[3]);
@@ -52,7 +52,7 @@ public class TankTest {
     /**
      * Test method for negative coordinate behavior of {@link icd3.Tank#setCoordinates(double[], double[])}.
      */
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSetCoordinatesNegative() {
         Tank tank = new Tank();
         tank.setCoordinates(m_topRight, m_bottomLeft);
@@ -61,7 +61,7 @@ public class TankTest {
     /**
      * Test method for not enough min dimensions behavior of {@link icd3.Tank#setCoordinates(double[], double[])}.
      */
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSetCoordinatesWrongMinDimension() {
         Tank tank = new Tank();
         tank.setCoordinates(new double[2], new double[3]);
@@ -70,7 +70,7 @@ public class TankTest {
     /**
      * Test method for not enough max dimensions behavior of {@link icd3.Tank#setCoordinates(double[], double[])}.
      */
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSetCoordinatesWrongMaxDimension() {
         Tank tank = new Tank();
         tank.setCoordinates(new double[3], new double[2]);
@@ -88,4 +88,31 @@ public class TankTest {
         assertTrue(tank.baseArea() == 1.0);
     }
 
+    /**
+     * Test method for {@link icd3.Tank#equals(Object)}.
+     */
+    @Test
+    public void testTankEquality() {
+        Tank defaultTank = new Tank();
+        Tank zeroTank = new Tank(new double[3], new double[3]);
+        double[] unitBottom = { 0, 0, 0 };
+        double[] unitTop = { 1, 1, 1 };
+        Tank unitTank = new Tank(unitBottom, unitTop);
+        double[] otherUnitBottom = new double[3];
+        double[] otherUnitTop = new double[3];
+        for (int i = 0; i < 3; ++i) {
+            otherUnitBottom[i] = 0;
+            otherUnitTop[i] = 1;
+        }
+        Tank otherUnitTank = new Tank(otherUnitBottom, otherUnitTop);
+
+        assertFalse(defaultTank.equals(zeroTank));
+        assertTrue(defaultTank.equals(defaultTank));
+        assertFalse(zeroTank.equals(unitTank));
+        assertTrue(unitTank.equals(unitTank));
+        assertTrue(unitTank.equals(otherUnitTank));
+        assertTrue(otherUnitTank.equals(unitTank));
+        assertFalse(defaultTank.equals(null));
+        assertFalse(unitTank.equals(null));
+    }
 }
