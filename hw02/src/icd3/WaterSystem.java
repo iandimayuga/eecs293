@@ -5,6 +5,7 @@
 package icd3;
 
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -157,8 +158,10 @@ public class WaterSystem
         // and deactivating them as they are encountered in tanksByTop
         for (double height : breakPoints)
         {
-            Set<Tank> toActivate = tanksByBottom.floorEntry(height).getValue();
-            Set<Tank> toDeactivate = tanksByTop.floorEntry(height).getValue();
+            Entry<Double, Set<Tank>> bottomsBelow = tanksByBottom.floorEntry(height);
+            Set<Tank> toActivate = null == bottomsBelow ? new HashSet<Tank>() : bottomsBelow.getValue();
+            Entry<Double, Set<Tank>> topsBelow = tanksByTop.floorEntry(height);
+            Set<Tank> toDeactivate = null == topsBelow ? new HashSet<Tank>() : topsBelow.getValue();
 
             // Perform activations and deactivations using set addition and subtraction
             runningActiveTanks.addAll(toActivate);
