@@ -239,6 +239,7 @@ public class WaterSystem
             // Add the entry
             activeTanks.put(currentBreakPoint, new HashSet<Tank>(runningActiveTanks));
         }
+        assert(bottomFinished);
 
         return activeTanks;
     }
