@@ -48,14 +48,18 @@ public class WaterSystem
     /**
      * Initializes the WaterSystem to the specified set of Tanks.
      *
-     * @param initialSystem The set of Tanks to be added to the WaterSystem.
+     * @param initialSystem The set of Tanks to represent the WaterSystem.
      */
     public WaterSystem(Set<Tank> initialSystem)
     {
         // Store the raw set
-        m_tankSet = new HashSet<>(initialSystem);
+        this.setTankSystem(initialSystem);
     }
 
+    /**
+     * Sets the system to the specified set of tanks.
+     * @param tankSystem The set of Tanks representing the WaterSystem.
+     */
     public void setTankSystem(Set<Tank> tankSystem)
     {
         m_tankSet = new HashSet<>(tankSystem);
