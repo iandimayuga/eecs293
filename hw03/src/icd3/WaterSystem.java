@@ -54,12 +54,15 @@ public class WaterSystem
     {
         // Store the raw set
         m_tankSet = new HashSet<>(initialSystem);
+    }
 
-        // Pipe the data through the generator helpers to populate the maps
-        m_tanksByBottom = generateTanksByEdge(m_tankSet, false);
-        m_tanksByTop = generateTanksByEdge(m_tankSet, true);
-        m_activeTanks = generateActiveTanks(m_tanksByBottom, m_tanksByTop);
-        m_activeBaseArea = generateActiveBaseArea(m_activeTanks);
+    public void setTankSystem(Set<Tank> tankSystem)
+    {
+        m_tankSet = new HashSet<>(tankSystem);
+
+        // Invalidate the cache
+        m_tanksByBottom = m_tanksByTop = m_activeTanks = null;
+        m_activeBaseArea = null;
     }
 
     /**
@@ -69,6 +72,10 @@ public class WaterSystem
      */
     public NavigableMap<Double, Set<Tank>> tanksByBottom()
     {
+        // If the cache is invalid, then regenerate the requested map
+        if (null == m_tanksByBottom) {
+            m_tanksByBottom = generateTanksByEdge(m_tankSet, false);
+        }
         return m_tanksByBottom;
     }
 
@@ -79,6 +86,10 @@ public class WaterSystem
      */
     public NavigableMap<Double, Set<Tank>> tanksByTop()
     {
+        // If the cache is invalid, then regenerate the requested map
+        if (null == m_tanksByTop) {
+            m_tanksByTop = generateTanksByEdge(m_tankSet, true);
+        }
         return m_tanksByTop;
     }
 
@@ -89,6 +100,11 @@ public class WaterSystem
      */
     public NavigableMap<Double, Set<Tank>> activeTanks()
     {
+        // If the cache is invalid, then regenerate the requested map
+        if (null == m_activeTanks) {
+            // Call dependencies which can either return cached structures or regenerate them in turn
+            m_activeTanks = generateActiveTanks(this.tanksByBottom(), this.tanksByTop());
+        }
         return m_activeTanks;
     }
 
@@ -99,6 +115,11 @@ public class WaterSystem
      */
     public NavigableMap<Double, Double> activeBaseArea()
     {
+        // If the cache is invalid, then regenerate the requested map
+        if (null == m_activeBaseArea) {
+            // Call dependency which can either return cached structure or regenerate it in turn
+            m_activeBaseArea = generateActiveBaseArea(this.activeTanks());
+        }
         return m_activeBaseArea;
     }
 
@@ -135,8 +156,8 @@ public class WaterSystem
     /**
      * Generate a NavigableMap of breakpoints to sets of active tanks.
      *
-     * @param tanksByBottom A NavigableMap of bottom edges to sets of tanks. Must not be empty.
-     * @param tanksByTop A NavigableMap of top edges to sets of tanks. Must not be empty.
+     * @param tanksByBottom A NavigableMap of bottom edges to sets of tanks.
+     * @param tanksByTop A NavigableMap of top edges to sets of tanks.
      * @return The desired Map.
      */
     private static NavigableMap<Double, Set<Tank>> generateActiveTanks(NavigableMap<Double, Set<Tank>> tanksByBottom,
@@ -144,6 +165,10 @@ public class WaterSystem
     {
         // Initialize the map to be returned
         NavigableMap<Double, Set<Tank>> activeTanks = new TreeMap<>();
+
+        if (tanksByBottom.size() == 0) {
+            return activeTanks;
+        }
 
         // Create a running Set of active tanks
         Set<Tank> runningActiveTanks = new HashSet<>();
