@@ -4,7 +4,6 @@
  */
 package icd3;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -136,8 +135,8 @@ public class WaterSystem
     /**
      * Generate a NavigableMap of breakpoints to sets of active tanks.
      *
-     * @param tanksByBottom A NavigableMap of bottom edges to sets of tanks.
-     * @param tanksByTop A NavigableMap of top edges to sets of tanks.
+     * @param tanksByBottom A NavigableMap of bottom edges to sets of tanks. Must not be empty.
+     * @param tanksByTop A NavigableMap of top edges to sets of tanks. Must not be empty.
      * @return The desired Map.
      */
     private static NavigableMap<Double, Set<Tank>> generateActiveTanks(NavigableMap<Double, Set<Tank>> tanksByBottom,
@@ -150,49 +149,66 @@ public class WaterSystem
         Set<Tank> runningActiveTanks = new HashSet<>();
 
         // Get the EntrySet Iterators from both tanksByBottom and tanksByTop
-        Entry<Double, Set<Tank>>[] bottomsFromBelow = (Entry<Double, Set<Tank>>[]) tanksByBottom.entrySet().toArray();
-        Entry<Double, Set<Tank>>[] topsFromBelow = (Entry<Double, Set<Tank>>[]) tanksByTop.entrySet().toArray();
+        Iterator<Entry<Double, Set<Tank>>> bottomsFromBelow = tanksByBottom.entrySet().iterator();
+        Iterator<Entry<Double, Set<Tank>>> topsFromBelow = tanksByTop.entrySet().iterator();
 
-        int bottomIndex = 0, topIndex = 0;
+        // Current top and bottom points
+        Entry<Double, Set<Tank>> currentBottom = bottomsFromBelow.next();
+        Entry<Double, Set<Tank>> currentTop = topsFromBelow.next();
+
+        // Don't advance the bottom break point if there is nothing left
+        boolean bottomFinished = false, topFinished = false;
 
         // Iterate through both entry sets in parallel, activating tanks as they are encountered in bottoms,
         // and deactivating them as they are encountered in tops
         // The last bottom can never be at or above the last top, so this condition is sufficient
-        while (topIndex < topsFromBelow.length)
+        while (!topFinished)
         {
-            // Stop advancing bottom if it's at the last one
-            boolean bottomFinished = bottomIndex >= bottomsFromBelow.length - 1;
-
-            Entry<Double, Set<Tank>> currentBottom = bottomsFromBelow[bottomIndex];
-            Entry<Double, Set<Tank>> currentTop = topsFromBelow[topIndex];
-
             // This will be set to either the bottom or the top, or both (if equal)
             double currentBreakPoint = 0;
 
+            // Hold onto the top break point so both ifs are checking the same value
+            double top = currentTop.getKey();
+
             // The lower current key is the current break point to consider
             // Both conditionals evaluate to true if bottom and top are equal, so they both would advance
-            if (!bottomFinished && currentBottom.getKey() <= currentTop.getKey())
+            if (bottomFinished || top <= currentBottom.getKey())
             {
-                currentBreakPoint = currentBottom.getKey();
-                // This is a bottom break point, so activate
-                runningActiveTanks.addAll(currentBottom.getValue());
-
-                // Then advance the current bottom key
-                ++bottomIndex;
-            }
-            if (bottomFinished || currentTop.getKey() <= currentBottom.getKey())
-            {
-                currentBreakPoint = currentTop.getKey();
+                currentBreakPoint = top;
 
                 // This is a top break point, so deactivate
                 runningActiveTanks.removeAll(currentTop.getValue());
 
-                // Then advance the current top key
-                ++topIndex;
+                // Then advance the current top key, unless top is finished
+                if (topsFromBelow.hasNext())
+                {
+                    currentTop = topsFromBelow.next();
+                }
+                else
+                {
+                    topFinished = true;
+                }
+            }
+            if (!bottomFinished && currentBottom.getKey() <= top)
+            {
+                currentBreakPoint = currentBottom.getKey();
+
+                // This is a bottom break point, so activate
+                runningActiveTanks.addAll(currentBottom.getValue());
+
+                // Then advance the current bottom key, unless bottom is finished
+                if (bottomsFromBelow.hasNext())
+                {
+                    currentBottom = bottomsFromBelow.next();
+                }
+                else
+                {
+                    bottomFinished = true;
+                }
             }
 
             // Add the entry
-            activeTanks.put(currentBreakPoint, runningActiveTanks);
+            activeTanks.put(currentBreakPoint, new HashSet<Tank>(runningActiveTanks));
         }
 
         return activeTanks;
