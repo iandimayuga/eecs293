@@ -49,7 +49,17 @@ public class TankTest
     public void testSetCoordinatesIllegalState()
     {
         Tank tank = new Tank();
-        tank.setCoordinates(new double[3], new double[3]);
+        tank.setCoordinates(new double[3], new double[] {1, 1, 1});
+        tank.setCoordinates(new double[3], new double[] {2, 2, 2});
+    }
+
+    /**
+     * Test method for zero coordinate behavior of {@link icd3.Tank#setCoordinates(double[], double[])}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetCoordinatesZero()
+    {
+        Tank tank = new Tank();
         tank.setCoordinates(new double[3], new double[3]);
     }
 
@@ -103,7 +113,6 @@ public class TankTest
     public void testTankEquality()
     {
         Tank defaultTank = new Tank();
-        Tank zeroTank = new Tank(new double[3], new double[3]);
         double[] unitBottom = { 0, 0, 0 };
         double[] unitTop = { 1, 1, 1 };
         Tank unitTank = new Tank(unitBottom, unitTop);
@@ -116,9 +125,7 @@ public class TankTest
         }
         Tank otherUnitTank = new Tank(otherUnitBottom, otherUnitTop);
 
-        assertFalse(defaultTank.equals(zeroTank));
         assertTrue(defaultTank.equals(defaultTank));
-        assertFalse(zeroTank.equals(unitTank));
         assertTrue(unitTank.equals(unitTank));
         assertTrue(unitTank.equals(otherUnitTank));
         assertTrue(otherUnitTank.equals(unitTank));

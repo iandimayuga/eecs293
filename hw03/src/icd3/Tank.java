@@ -78,8 +78,8 @@ public class Tank
      * @param topRight A point in space that will represent the maximum x,y,z of the tank.
      * @throws IllegalStateException If setCoordinates or the parameterized constructor have been called before.
      * @throws IllegalArgumentException If there are not enough coordinates in either parameter.
-     * @throws IllegalArgumentException If any of bottomLeft's components are greater than topRight's corresponding
-     *             component.
+     * @throws IllegalArgumentException If any of bottomLeft's components are greater than or equal to topRight's
+     *             corresponding component.
      */
     public void setCoordinates(double[] bottomLeft, double[] topRight)
     {
@@ -102,7 +102,7 @@ public class Tank
         // Validate that bottomLeft is less than or equal to topRight in all components
         for (int i = 0; i < 3; ++i)
         {
-            if (bottomLeft[i] > topRight[i])
+            if (bottomLeft[i] >= topRight[i])
             {
                 throw new IllegalArgumentException(String.format("Edge %d (%c-coordinate) is negative.", i,
                         s_coordinateName[i]));
