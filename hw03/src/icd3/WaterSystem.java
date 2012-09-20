@@ -4,13 +4,13 @@
  */
 package icd3;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
-import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * A data structure to represent a system of Tanks related by their heights and vertical positions.
@@ -146,29 +146,53 @@ public class WaterSystem
         // Initialize the map to be returned
         NavigableMap<Double, Set<Tank>> activeTanks = new TreeMap<>();
 
-        // Create a NavigableSet of all break points
-        NavigableSet<Double> breakPoints = new TreeSet<>();
-        breakPoints.addAll(tanksByBottom.navigableKeySet());
-        breakPoints.addAll(tanksByTop.navigableKeySet());
-
         // Create a running Set of active tanks
         Set<Tank> runningActiveTanks = new HashSet<>();
 
-        // Iterate through break points, activating tanks as they are encountered in tanksByBottom,
-        // and deactivating them as they are encountered in tanksByTop
-        for (double height : breakPoints)
+        // Get the EntrySet Iterators from both tanksByBottom and tanksByTop
+        Entry<Double, Set<Tank>>[] bottomsFromBelow = (Entry<Double, Set<Tank>>[]) tanksByBottom.entrySet().toArray();
+        Entry<Double, Set<Tank>>[] topsFromBelow = (Entry<Double, Set<Tank>>[]) tanksByTop.entrySet().toArray();
+
+        int bottomIndex = 0, topIndex = 0;
+
+        // Iterate through both entry sets in parallel, activating tanks as they are encountered in bottoms,
+        // and deactivating them as they are encountered in tops
+        // The last bottom can never be at or above the last top, so this condition is sufficient
+        while (topIndex < topsFromBelow.length)
         {
-            Entry<Double, Set<Tank>> bottomsBelow = tanksByBottom.floorEntry(height);
-            Set<Tank> toActivate = null == bottomsBelow ? new HashSet<Tank>() : bottomsBelow.getValue();
-            Entry<Double, Set<Tank>> topsBelow = tanksByTop.floorEntry(height);
-            Set<Tank> toDeactivate = null == topsBelow ? new HashSet<Tank>() : topsBelow.getValue();
+            // Stop advancing bottom if it's at the last one
+            boolean bottomFinished = bottomIndex >= bottomsFromBelow.length - 1;
 
-            // Perform activations and deactivations using set addition and subtraction
-            runningActiveTanks.addAll(toActivate);
-            runningActiveTanks.removeAll(toDeactivate);
+            Entry<Double, Set<Tank>> currentBottom = bottomsFromBelow[bottomIndex];
+            Entry<Double, Set<Tank>> currentTop = topsFromBelow[topIndex];
 
-            // Copy the running set to the break point's entry
-            activeTanks.put(height, new HashSet<Tank>(runningActiveTanks));
+            // This will be set to either the bottom or the top, or both (if equal)
+            double currentBreakPoint = 0;
+
+            // The lower current key is the current break point to consider
+            // Both conditionals evaluate to true if bottom and top are equal, so they both would advance
+            if (!bottomFinished && currentBottom.getKey() <= currentTop.getKey())
+            {
+                currentBreakPoint = currentBottom.getKey();
+                // This is a bottom break point, so activate
+                runningActiveTanks.addAll(currentBottom.getValue());
+
+                // Then advance the current bottom key
+                ++bottomIndex;
+            }
+            if (bottomFinished || currentTop.getKey() <= currentBottom.getKey())
+            {
+                currentBreakPoint = currentTop.getKey();
+
+                // This is a top break point, so deactivate
+                runningActiveTanks.removeAll(currentTop.getValue());
+
+                // Then advance the current top key
+                ++topIndex;
+            }
+
+            // Add the entry
+            activeTanks.put(currentBreakPoint, runningActiveTanks);
         }
 
         return activeTanks;
