@@ -99,14 +99,13 @@ public class Tank
                     wrongParam, wrongValue, 3));
         }
 
-        // Validate that bottomLeft is less than or equal to topRight in all components
-        for (int i = 0; i < 3; ++i)
+        // Get the coordinate of illegal edge, if any. -1 means all edges positive.
+        int illegalEdge = getIllegalEdge(bottomLeft, topRight);
+
+        if (illegalEdge >= 0)
         {
-            if (bottomLeft[i] >= topRight[i])
-            {
-                throw new IllegalArgumentException(String.format("Edge %d (%c-coordinate) is negative.", i,
-                        s_coordinateName[i]));
-            }
+            throw new IllegalArgumentException(String.format("Edge %d (%c-coordinate) is negative.", illegalEdge,
+                    s_coordinateName[illegalEdge]));
         }
 
         // Copy each vector (ignoring any coordinates after 3)
@@ -122,6 +121,30 @@ public class Tank
 
         // Set mutation flag
         m_isSet = true;
+    }
+
+    /**
+     * Returns the index of a non-positive edge, if any.
+     *
+     * @param bottomLeft 3D coordinate of what is expected to be the minimum point.
+     * @param topRight 3D coordinate of what is expected to be the maximum point.
+     * @return -1 if all edges are positive, or the index of the a non-positive edge.
+     */
+    private int getIllegalEdge(double[] bottomLeft, double[] topRight)
+    {
+        // Use a status variable for Structured Programming
+        int illegalEdge = -1;
+
+        // Validate that bottomLeft is less than or equal to topRight in all components
+        for (int i = 0; i < 3; ++i)
+        {
+            if (bottomLeft[i] >= topRight[i])
+            {
+                illegalEdge = i;
+            }
+        }
+
+        return illegalEdge;
     }
 
     /**
