@@ -8,9 +8,9 @@ import java.util.Arrays;
 
 /**
  * An immutable data structure representing a rectangular prism in three-dimensional space.
- *
+ * 
  * @author ian
- *
+ * 
  */
 public class Tank
 {
@@ -73,7 +73,7 @@ public class Tank
     /**
      * Set the Tank's minimum and maximum points to the specified coordinates. This can only be done once. Calling the
      * parameterized constructor counts as setting the coordinates.
-     *
+     * 
      * @param bottomLeft A point in space that will represent the minimum x,y,z of the tank.
      * @param topRight A point in space that will represent the maximum x,y,z of the tank.
      * @throws IllegalStateException If setCoordinates or the parameterized constructor have been called before.
@@ -88,25 +88,9 @@ public class Tank
         {
             throw new IllegalStateException("Tank coordinates cannot be set more than once.");
         }
-
-        // Check for too few elements
-        if (bottomLeft.length < 3 || topRight.length < 3)
-        {
-            // Format meaningful exception output (extra conditionals here are okay because we are about to throw)
-            String wrongParam = (bottomLeft.length < 3 ? "bottomLeft" : "topRight");
-            int wrongValue = (bottomLeft.length < 3 ? bottomLeft.length : topRight.length);
-            throw new IllegalArgumentException(String.format("Parameter %s has only %d elements. Expected: %d",
-                    wrongParam, wrongValue, 3));
-        }
-
-        // Get the coordinate of illegal edge, if any. -1 means all edges positive.
-        int illegalEdge = getIllegalEdge(bottomLeft, topRight);
-
-        if (illegalEdge >= 0)
-        {
-            throw new IllegalArgumentException(String.format("Edge %d (%c-coordinate) is negative.", illegalEdge,
-                    s_coordinateName[illegalEdge]));
-        }
+        
+        // Enforce parameter validity
+        throwIfInvalid(bottomLeft, topRight);
 
         // Copy each vector (ignoring any coordinates after 3)
         m_bottomLeft = Arrays.copyOf(bottomLeft, 3);
@@ -124,32 +108,36 @@ public class Tank
     }
 
     /**
-     * Returns the index of a non-positive edge, if any.
-     *
-     * @param bottomLeft 3D coordinate of what is expected to be the minimum point.
-     * @param topRight 3D coordinate of what is expected to be the maximum point.
-     * @return -1 if all edges are positive, or the index of the a non-positive edge.
+     * Throws an exception if bottomLeft and topRight do not represent valid coordinates.
+     * @param bottomLeft A point in space that will represent the minimum x,y,z of the tank.
+     * @param topRight A point in space that will represent the maximum x,y,z of the tank.
      */
-    private int getIllegalEdge(double[] bottomLeft, double[] topRight)
+    private static void throwIfInvalid(double[] bottomLeft, double[] topRight)
     {
-        // Use a status variable for Structured Programming
-        int illegalEdge = -1;
+        // Check for too few elements
+        if (bottomLeft.length < 3 || topRight.length < 3)
+        {
+            // Format meaningful exception output (extra conditionals here are okay because we are about to throw)
+            String wrongParam = (bottomLeft.length < 3 ? "bottomLeft" : "topRight");
+            int wrongValue = (bottomLeft.length < 3 ? bottomLeft.length : topRight.length);
+            throw new IllegalArgumentException(String.format("Parameter %s has only %d elements. Expected: %d",
+                    wrongParam, wrongValue, 3));
+        }
 
-        // Validate that bottomLeft is less than or equal to topRight in all components
+        // Validate that bottomLeft is less than topRight in all components
         for (int i = 0; i < 3; ++i)
         {
             if (bottomLeft[i] >= topRight[i])
             {
-                illegalEdge = i;
+                throw new IllegalArgumentException(String.format("Edge %d (%c-coordinate) is negative.", i,
+                        s_coordinateName[i]));
             }
         }
-
-        return illegalEdge;
     }
 
     /**
      * Get the bottom height of the Tank.
-     *
+     * 
      * @return The minimum z-value.
      */
     public double getBottom()
@@ -159,7 +147,7 @@ public class Tank
 
     /**
      * Get the top height of the Tank.
-     *
+     * 
      * @return The maximum z-value.
      */
     public double getTop()
@@ -169,7 +157,7 @@ public class Tank
 
     /**
      * Get the area of the base of the tank.
-     *
+     * 
      * @return The area of the cross-section in the xy plane.
      */
     public double baseArea()
@@ -179,7 +167,7 @@ public class Tank
 
     /**
      * Returns a hash code for the Tank. The hash code is computed by concatenating the bottomLeft and topRight arrays.
-     *
+     * 
      * @return A hash code value for this object.
      */
     @Override
@@ -191,9 +179,9 @@ public class Tank
     /**
      * Compares this Tank to the specified object. The result is true if and only if the argument is not null and is a
      * Tank object whose hashCode evaluates to the same number as this object's.
-     *
+     * 
      * @param o The object to compare this Tank against
-     *
+     * 
      * @return true if the given object represents a Tank equivalent to this, and false otherwise.
      */
     @Override
@@ -204,7 +192,7 @@ public class Tank
 
     /**
      * Returns a string representation of the Tank.
-     *
+     * 
      * @return "Tank: Default" for the default Tank, otherwise the coordinates of the Tank.
      */
     @Override

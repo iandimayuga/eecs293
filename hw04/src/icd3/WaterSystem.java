@@ -76,6 +76,10 @@ public class WaterSystem
      */
     public NavigableMap<Double, Set<Tank>> tanksByBottom()
     {
+        return deepCloneMap(this.fetchTanksByBottom());
+    }
+    private NavigableMap<Double, Set<Tank>> fetchTanksByBottom()
+    {
         // If the cache is invalid, then regenerate the requested map
         if (null == m_tanksByBottom) {
             m_tanksByBottom = generateTanksByEdge(m_tankSet, false);
@@ -89,6 +93,10 @@ public class WaterSystem
      * @return The desired Map.
      */
     public NavigableMap<Double, Set<Tank>> tanksByTop()
+    {
+        return deepCloneMap(this.fetchTanksByTop());
+    }
+    private NavigableMap<Double, Set<Tank>> fetchTanksByTop()
     {
         // If the cache is invalid, then regenerate the requested map
         if (null == m_tanksByTop) {
@@ -104,10 +112,14 @@ public class WaterSystem
      */
     public NavigableMap<Double, Set<Tank>> activeTanks()
     {
+        return deepCloneMap(this.fetchActiveTanks());
+    }
+    private NavigableMap<Double, Set<Tank>> fetchActiveTanks()
+    {
         // If the cache is invalid, then regenerate the requested map
         if (null == m_activeTanks) {
             // Call dependencies which can either return cached structures or regenerate them in turn
-            m_activeTanks = generateActiveTanks(this.tanksByBottom(), this.tanksByTop());
+            m_activeTanks = generateActiveTanks(this.fetchTanksByBottom(), this.fetchTanksByTop());
         }
         return m_activeTanks;
     }
@@ -119,12 +131,38 @@ public class WaterSystem
      */
     public NavigableMap<Double, Double> activeBaseArea()
     {
+        // Deep Cloning not necessary because Doubles are immutable
+        return new TreeMap<>(this.fetchActiveBaseArea());
+    }
+    private NavigableMap<Double, Double> fetchActiveBaseArea()
+    {
         // If the cache is invalid, then regenerate the requested map
         if (null == m_activeBaseArea) {
             // Call dependency which can either return cached structure or regenerate it in turn
-            m_activeBaseArea = generateActiveBaseArea(this.activeTanks());
+            m_activeBaseArea = generateActiveBaseArea(this.fetchActiveTanks());
         }
         return m_activeBaseArea;
+    }
+    
+    /**
+     * Deep clones a map from Double to Set of Tanks
+     * @param originalMap The map to be cloned.
+     * @return A new map with the same mappings and cloned Sets as values
+     */
+    private static NavigableMap<Double, Set<Tank>> deepCloneMap(NavigableMap<Double, Set<Tank>> originalMap)
+    {
+        NavigableMap<Double, Set<Tank>> clonedMap = new TreeMap<>();
+        
+        // Iterate through the entrySet of the originalMap
+        Set<Entry<Double, Set<Tank>>> originalSet = originalMap.entrySet();
+        
+        // Copy the tank Set into a new HashSet and put in new map
+        for (Entry<Double, Set<Tank>> entry : originalSet)
+        {
+            clonedMap.put(entry.getKey(), new HashSet<Tank>(entry.getValue()));
+        }
+        
+        return clonedMap;
     }
 
     /**
