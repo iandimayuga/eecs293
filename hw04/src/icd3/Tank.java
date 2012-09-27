@@ -187,7 +187,8 @@ public class Tank
     @Override
     public boolean equals(Object o)
     {
-        return null == o || o.getClass() != Tank.class ? false : o.hashCode() == this.hashCode();
+        // Ensure other object is not null, is of the same class, and has equal hashCode.
+        return o != null && o.getClass() == Tank.class && o.hashCode() == this.hashCode();
     }
 
     /**
