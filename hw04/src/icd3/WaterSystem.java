@@ -78,6 +78,11 @@ public class WaterSystem
     {
         return deepCloneMap(this.fetchTanksByBottom());
     }
+    
+    /**
+     * Helper method to fetch or generate map.
+     * @return The desired Map.
+     */
     private NavigableMap<Double, Set<Tank>> fetchTanksByBottom()
     {
         // If the cache is invalid, then regenerate the requested map
@@ -96,6 +101,11 @@ public class WaterSystem
     {
         return deepCloneMap(this.fetchTanksByTop());
     }
+    
+    /**
+     * Helper method to fetch or generate map.
+     * @return The desired Map.
+     */
     private NavigableMap<Double, Set<Tank>> fetchTanksByTop()
     {
         // If the cache is invalid, then regenerate the requested map
@@ -114,6 +124,11 @@ public class WaterSystem
     {
         return deepCloneMap(this.fetchActiveTanks());
     }
+    
+    /**
+     * Helper method to fetch or generate map.
+     * @return The desired Map.
+     */
     private NavigableMap<Double, Set<Tank>> fetchActiveTanks()
     {
         // If the cache is invalid, then regenerate the requested map
@@ -134,6 +149,11 @@ public class WaterSystem
         // Deep Cloning not necessary because Doubles are immutable
         return new TreeMap<>(this.fetchActiveBaseArea());
     }
+    
+    /**
+     * Helper method to fetch or generate map.
+     * @return The desired Map.
+     */
     private NavigableMap<Double, Double> fetchActiveBaseArea()
     {
         // If the cache is invalid, then regenerate the requested map
