@@ -88,7 +88,7 @@ public class Tank
         {
             throw new IllegalStateException("Tank coordinates cannot be set more than once.");
         }
-        
+
         // Enforce parameter validity
         throwIfInvalid(bottomLeft, topRight);
 
@@ -109,6 +109,7 @@ public class Tank
 
     /**
      * Throws an exception if bottomLeft and topRight do not represent valid coordinates.
+     * 
      * @param bottomLeft A point in space that will represent the minimum x,y,z of the tank.
      * @param topRight A point in space that will represent the maximum x,y,z of the tank.
      */
@@ -178,7 +179,7 @@ public class Tank
 
     /**
      * Compares this Tank to the specified object. The result is true if and only if the argument is not null and is a
-     * Tank object whose hashCode evaluates to the same number as this object's.
+     * Tank object whose coordinates are identical to this object's.
      * 
      * @param o The object to compare this Tank against
      * 
@@ -187,8 +188,9 @@ public class Tank
     @Override
     public boolean equals(Object o)
     {
-        // Ensure other object is not null, is of the same class, and has equal hashCode.
-        return o != null && o.getClass() == Tank.class && o.hashCode() == this.hashCode();
+        // Ensure other object is not null, is of the same class, and has equal arrays.
+        return o != null && o.getClass() == Tank.class && Arrays.equals(((Tank) o).m_topRight, m_topRight)
+                && Arrays.equals(((Tank) o).m_bottomLeft, m_bottomLeft);
     }
 
     /**
