@@ -323,13 +323,16 @@ public class WaterSystem
         // Create a running Set of active tanks
         Set<Tank> runningActiveTanks = new HashSet<>();
 
+        // Iterate through the two sets in parallel using a BreakPointIterator
         BreakPointIterator slider = new BreakPointIterator(tanksByBottom.entrySet(), tanksByTop.entrySet());
 
         while (slider.iterate())
         {
+            // Activate and deactivate tanks as indicated by the sliding BreakPointIterator
             runningActiveTanks.addAll(slider.toActivate());
             runningActiveTanks.removeAll(slider.toDeactivate());
 
+            // Populate the map
             activeTanks.put(slider.currentBreakPoint(), new HashSet<Tank>(runningActiveTanks));
         }
 
