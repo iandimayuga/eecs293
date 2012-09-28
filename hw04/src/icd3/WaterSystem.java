@@ -308,9 +308,107 @@ public class WaterSystem
             // Add the entry
             activeTanks.put(currentBreakPoint, new HashSet<Tank>(runningActiveTanks));
         }
-        assert(bottomFinished);
+        assert (bottomFinished);
 
         return activeTanks;
+    }
+
+    /**
+     * Encapsulates the parallel iteration for two sets of breakpoint->tankset maps
+     *
+     */
+    private class BreakPointIterator
+    {
+        private Iterator<Entry<Double, Set<Tank>>> m_bottoms;
+        private Iterator<Entry<Double, Set<Tank>>> m_tops;
+        private Entry<Double, Set<Tank>> m_currentBottom;
+        private Entry<Double, Set<Tank>> m_currentTop;
+        private Set<Tank> m_emptySet;
+
+        private boolean m_bottomFinished;
+
+        public BreakPointIterator(Set<Entry<Double, Set<Tank>>> bottomSet, Set<Entry<Double, Set<Tank>>> topSet)
+        {
+            m_bottoms = bottomSet.iterator();
+            m_tops = topSet.iterator();
+
+            m_currentBottom = m_currentTop = null;
+
+            m_bottomFinished = false;
+
+            m_emptySet = new HashSet<>();
+        }
+
+        public Set<Tank> toActivate()
+        {
+            // We activate the tanks whose bottoms are at the current break point
+            if (m_currentBottom.getKey() == this.currentBreakPoint())
+            {
+                return m_currentBottom.getValue();
+            }
+            else
+            {
+                // If there are no tanks whose bottoms are at the current break point, no activation occurs
+                return m_emptySet;
+            }
+        }
+
+        public Set<Tank> toDeactivate()
+        {
+            // We deactivate the tanks whose tops are at the current break point
+            if (m_currentTop.getKey() == this.currentBreakPoint())
+            {
+                return m_currentTop.getValue();
+            }
+            else
+            {
+                // If there are no tanks whose tops are at the current break point, no deactivation occurs
+                return m_emptySet;
+            }
+        }
+
+        public double currentBreakPoint()
+        {
+            if (null == m_currentBottom || null == m_currentTop)
+                return Double.NEGATIVE_INFINITY;
+
+            // The top is now the current break point if we are out of bottoms
+            if (! m_bottomFinished)
+                return m_currentTop.getKey();
+
+            return Math.min(m_currentBottom.getKey(), m_currentTop.getKey());
+        }
+
+        /**
+         * Advances to the next break point.
+         *
+         * @return false if there is no next break point.
+         */
+        public boolean iterate()
+        {
+            if (!m_bottoms.hasNext() && !m_tops.hasNext())
+            {
+                return false;
+            }
+
+            // Get the current break point
+            double breakPoint = this.currentBreakPoint();
+
+            // Whichever current entry is at the current break point should be advanced
+            if (m_currentTop.getKey() == breakPoint)
+            {
+                m_currentTop = m_tops.next();
+            }
+            if (m_currentBottom.getKey() == breakPoint)
+            {
+                if (m_bottoms.hasNext())
+                    m_currentBottom = m_bottoms.next();
+                else
+                    m_bottomFinished = true;
+            }
+
+            return true;
+        }
     }
 
     /**
