@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 
@@ -139,4 +140,45 @@ public class WaterSystemTest
         assertTrue(tanks.get(23.0) == 0.0);
     }
 
+    /**
+     * Test method for {@link icd3.WaterSystem#heightToTankLevel(Double)}.
+     */
+    @Test
+    public void testHeightToTankLevel()
+    {
+        Map<Tank, Double> tanks = s_testSystem.heightToTankLevel(16.0);
+        assertTrue(tanks.get(s_tankA) == 8.0);
+        assertTrue(tanks.get(s_tankB) == 5.0);
+        assertTrue(tanks.get(s_tankC) == 1.0);
+        assertTrue(tanks.get(s_tankD) == 0.0);
+    }
+
+    /**
+     * Test method for below-minimum water height behavior of {@link icd3.WaterSystem#heightToTankLevel(Double)}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testHeightToTankLevelLowHeight()
+    {
+        s_testSystem.heightToTankLevel(-1.0);
+    }
+
+    /**
+     * Test method for above-maximum water height behavior of {@link icd3.WaterSystem#heightToTankLevel(Double)}.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testHeightToTankLevelHighHeight()
+    {
+        s_testSystem.heightToTankLevel(24.0);
+    }
+
+    /**
+     * Test method for {@link icd3.WaterSystem#heightToVolume(Double)}.
+     */
+    @Test
+    public void testHeightToVolume()
+    {
+        assertTrue(s_testSystem.heightToVolume(16.0) == 69.0);
+        assertTrue(s_testSystem.heightToVolume(5.0) == 0.0);
+        assertTrue(s_testSystem.heightToVolume(23.0) == 131.0);
+    }
 }

@@ -5,10 +5,13 @@
 package icd3;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -175,6 +178,83 @@ public class WaterSystem
     }
 
     /**
+     * Get a Map associating Tanks to their filled height if the WaterSystem is at waterHeight. waterHeight must be
+     * within the range of tanks.
+     *
+     * @param waterHeight The height of the WaterSystem at which to measure.
+     * @return The desired map.
+     * @throws IllegalArgumentException if the waterHeight is outside the range of tanks.
+     * @throws NoSuchElementException if there are no tanks in the system.
+     */
+    public Map<Tank, Double> heightToTankLevel(Double waterHeight)
+    {
+        // Get the map of tanks by bottom and by top
+        NavigableMap<Double, Set<Tank>> tanksByBottom = this.fetchTanksByBottom();
+        NavigableMap<Double, Set<Tank>> tanksByTop = this.fetchTanksByTop();
+
+        // Make sure waterHeight is legal
+        if (waterHeight > tanksByTop.lastKey())
+        {
+            throw new IllegalArgumentException(String.format("The waterHeight of %f exceeds the maximum of %f.",
+                    waterHeight, tanksByTop.lastKey()));
+        }
+        if (waterHeight < tanksByBottom.firstKey())
+        {
+            throw new IllegalArgumentException(String.format("The waterHeight of %f is below the minimum of %f.",
+                    waterHeight, tanksByBottom.firstKey()));
+        }
+
+        // Initialize the map to be returned
+        Map<Tank, Double> tankLevelMap = new HashMap<>();
+
+        // Iterate through all sets of tanks
+        for (Set<Tank> tankSet : tanksByBottom.values())
+        {
+            // Put each tank in the tankLevelMap, associated with its filled height
+            // (top - bottom if full, waterHeight - bottom if active, 0 if empty)
+            for (Tank tank : tankSet)
+            {
+                // The tank is full if tank.getTop is below waterHeight
+                double filledHeight = Math.min(tank.getTop(), waterHeight) - tank.getBottom();
+
+                // The tank is empty if filledHeight is negative
+                tankLevelMap.put(tank, Math.max(filledHeight, 0));
+            }
+        }
+
+        return tankLevelMap;
+    }
+
+    /**
+     * Get the total volume of water in the system given a specified water height.
+     *
+     * @param waterHeight The height of the WaterSystem at which to measure.
+     * @return The volume of the water in all the tanks.
+     * @throws IllegalArgumentException if the waterHeight is outside the range of tanks.
+     * @throws NoSuchElementException if there are no tanks in the system.
+     */
+    public Double heightToVolume(Double waterHeight)
+    {
+        // Initialize the value to be returned
+        double totalVolume = 0;
+
+        // Get the heightToTankLevel map
+        Map<Tank, Double> tankLevelMap = this.heightToTankLevel(waterHeight);
+
+        // Iterate through the tanks and their filled heights, adding their filled volume to the total
+        for (Entry<Tank, Double> tankLevel : tankLevelMap.entrySet())
+        {
+            Tank tank = tankLevel.getKey();
+            double filledHeight = tankLevel.getValue();
+
+            // Volume = height * base area
+            totalVolume += filledHeight * tank.baseArea();
+        }
+
+        return totalVolume;
+    }
+
+    /**
      * Deep clones a map from Double to Set of Tanks
      *
      * @param originalMap The map to be cloned.
@@ -182,6 +262,7 @@ public class WaterSystem
      */
     private static NavigableMap<Double, Set<Tank>> deepCloneMap(NavigableMap<Double, Set<Tank>> originalMap)
     {
+        // Initialize the map to be returned
         NavigableMap<Double, Set<Tank>> clonedMap = new TreeMap<>();
 
         // Iterate through the entrySet of the originalMap
