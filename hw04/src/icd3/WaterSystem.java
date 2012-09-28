@@ -239,41 +239,21 @@ public class WaterSystem
         // Initialize the map to be returned
         NavigableMap<Double, Set<Tank>> activeTanks = new TreeMap<>();
 
-        if (tanksByBottom.size() == 0)
-        {
-            return activeTanks;
-        }
-
         // Create a running Set of active tanks
         Set<Tank> runningActiveTanks = new HashSet<>();
 
-        // Get the EntrySet Iterators from both tanksByBottom and tanksByTop
-        Iterator<Entry<Double, Set<Tank>>> bottomsFromBelow = tanksByBottom.entrySet().iterator();
-        Iterator<Entry<Double, Set<Tank>>> topsFromBelow = tanksByTop.entrySet().iterator();
+        BreakPointIterator slider = new BreakPointIterator(tanksByBottom.entrySet(), tanksByTop.entrySet());
 
-        // Current top and bottom points
-        Entry<Double, Set<Tank>> currentBottom = bottomsFromBelow.next();
-        Entry<Double, Set<Tank>> currentTop = topsFromBelow.next();
-
-        // Don't advance the bottom break point if there is nothing left
-        boolean bottomFinished = false, topFinished = false;
-
-        // Iterate through both entry sets in parallel, activating tanks as they are encountered in bottoms,
-        // and deactivating them as they are encountered in tops
-        // The last bottom can never be at or above the last top, so this condition is sufficient
-        while (!topFinished)
+        while (slider.iterate())
         {
-            // This will be set to either the bottom or the top, or both (if equal)
-            double currentBreakPoint = 0;
+            runningActiveTanks.addAll(slider.toActivate());
+            runningActiveTanks.removeAll(slider.toDeactivate());
 
-            // Hold onto the top break point so both ifs are checking the same value
-            double top = currentTop.getKey();
+            activeTanks.put(slider.currentBreakPoint(), new HashSet<Tank>(runningActiveTanks));
+        }
 
-            // The lower current key is the current break point to consider
-            // Both conditionals evaluate to true if bottom and top are equal, so they both would advance
-            if (bottomFinished || top <= currentBottom.getKey())
-            {
-                currentBreakPoint = top;
+        return activeTanks;
+    }
 
     /**
      * Generate a NavigableMap of breakpoints to the total base area of the active tanks.
