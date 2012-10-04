@@ -1,0 +1,6 @@
+Ian Dimayuga (icd3)
+EECS 293 HW05
+
+To compile: ant build
+To run Tank unit test: ant tankTest
+To run WaterSystem unit test: ant systemTest
