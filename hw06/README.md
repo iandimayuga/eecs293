@@ -5,7 +5,7 @@ RunningMedian.txt contains the pseudocode for the RunningMedian class.
 
 SortedArrayList.txt contains the pseudocode for the SortedArrayList class, which is a data structure used by RunningMedian.
 
-This design is intended to allow for arbitrary sizes of running median.
+This design is intended to allow for arbitrary sizes of running median, determined by the size of the initial input.
 The only restriction is that elements be added two at a time, as specified.
 This keeps the evenness of the list the same as the evenness of the median, eliminating the need to take averages.
 
