@@ -1,0 +1,58 @@
+SortedArrayList is an array-based collection that features O(N + Klog(K)) insertion of arbitrary numbers of elements, while still allowing for random access.
+
+This class is templated to any class that implements Comparable.
+
+The constructor SortedArrayList() initializes an empty array of default size.
+
+  Initialize the array to be empty and to have a capacity of some power of two
+  Initialize a member variable to keep track of the data structure's size to zero
+
+
+Method addAll(T ...) adds an arbitrary number K of elements in O(N + Klog(K)) time, preserving natural order.
+
+  Check that the resulting size of the structure does not exceed the internal array's capacity
+    If it does exceed capacity, resize the internal array to the nearest power of 2 higher than the expected capacity
+
+  Sort the K input elements in descending order to prepare them for insertion
+
+  Iterate over the array starting at the end of the filled portion
+    Let J be the number of input elements that have yet to be inserted
+    Shift each element to the right J
+
+    If we encounter the rightful position of the Jth element,
+      Insert that element in the current position and decrement J
+
+
+Method add(T) simply overloads addAll with one element.
+
+
+Method get(int) allows for random access of elements.
+
+  Check to ensure that the index is within the active portion of the data structure
+    Throw an exception if the index is out of bounds
+
+  Return the indexed element.
+
+
+Method subArray(int, int) allows for random access to arbitrary contiguous sequences of elements.
+It is inclusive of the first parameter and exclusive of the second.
+
+  Check to ensure that both indices are within the active portion of the data structure
+    Throw an exception if either index is out of bounds
+
+  Check to ensure that the indices are in order
+    Throw an exception if second is greater than the first
+
+  Return a copy of the specified range in the internal array
+
+
+Method size() gives the active size of the data structure
+
+  Return the stored member variable for active size
+
+
+Private Method resize(int) resizes the capacity of the internal array
+
+  Create a new array of the specified size
+  Copy the internal array to the new array
+  Store the new array in place of the old one

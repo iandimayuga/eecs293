@@ -1,0 +1,27 @@
+RunningMedian is a class that keeps track of a list of elements, preserving odd/even.
+It then can produce at any time a wide median of those elements. The size of this median is arbitrary.
+
+This class is templated to any class that implements Comparable.
+
+The constructor RunningMedian(T ...) takes in a variable number of parameters.
+These parameters comprise the initial median, and the number of parameters is the size of every running median returned by this object.
+
+  Store the size of the passed array as the size of the running median
+  Create a SortedArrayList (specified separately in SortedArrayList.txt), and add the elements to it
+
+
+Method median() gives an array containing the running wide median of the list.
+
+  Get the size of the SortedArrayList
+
+  The wide median is a sub-list centered around the median of the list
+    To be more precise, it is defined as the sub-list of size medianWidth starting at (listSize / 2 - medianWidth / 2)
+
+  Retrieve and return this sub-list from the SortedArrayList
+
+
+Method add(T, T) adds two elements to the list, thus preserving odd/even.
+It then also gives the current running median.
+
+  Add both elements to the SortedArrayList in bulk
+  Return the wide median of the list
