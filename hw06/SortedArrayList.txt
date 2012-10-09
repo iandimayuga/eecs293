@@ -13,14 +13,15 @@ Method addAll(T ...) adds an arbitrary number K of elements in O(N + Klog(K)) ti
   Check that the resulting size of the structure does not exceed the internal array's capacity
     If it does exceed capacity, resize the internal array to the nearest power of 2 higher than the expected capacity
 
-  Sort the K input elements in descending order to prepare them for insertion
+  Sort the K input elements to prepare them for insertion
 
   Iterate over the array starting at the end of the filled portion
     Let J be the number of input elements that have yet to be inserted
     Shift each element to the right J
 
-    If we encounter the rightful position of the Jth element,
-      Insert that element in the current position and decrement J
+    While we encounter the rightful position of the Jth element of K,
+      Insert that element in the current position, shifted to the right, and decrement J
+      Continue to compare the new Jth element to the current position before moving on with the outer iteration
 
 
 Method add(T) simply overloads addAll with one element.
