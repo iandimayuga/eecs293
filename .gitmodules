@@ -1,3 +1,7 @@
 [submodule "median"]
   path = median
   url = git@eecslinab6.case.edu:icd3/median.git
+
+[submodule "debugging"]
+  path = debugging
+  url = git@eecslinab6.case.edu:icd3/debugging.git
